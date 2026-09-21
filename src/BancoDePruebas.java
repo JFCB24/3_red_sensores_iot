@@ -70,4 +70,49 @@ public class BancoDePruebas {
 
         System.out.println();
     }
+
+    /**
+     * Demuestra por que un String se compara con equals() y no con ==.
+     *
+     * Se construye a proposito un String con el mismo contenido pero
+     * distinta referencia (new String(...)), que es exactamente lo que
+     * ocurre cuando el texto llega leido desde un archivo o una red.
+     */
+    public static void demostracionComparacionStrings() {
+
+        System.out.println(
+                "=== COMPARACION DE STRING: == vs equals() ==="
+        );
+
+        LecturaSensor[] datos = GeneradorDatos.generar(1_000);
+
+        // Mismo contenido, referencia diferente.
+        String buscado = new String("EST-005");
+
+        int conIgualdadReferencia =
+                BuscadorLecturas.buscarPorEstacionDefectuoso(
+                        datos,
+                        buscado
+                );
+
+        int conEquals =
+                BuscadorLecturas.buscarPorEstacion(
+                        datos,
+                        buscado
+                );
+
+        System.out.println(
+                "Estacion buscada: \"EST-005\" (existe en los datos)"
+        );
+
+        System.out.println(
+                "Con ==      -> posicion: " + conIgualdadReferencia
+        );
+
+        System.out.println(
+                "Con equals()-> posicion: " + conEquals
+        );
+
+        System.out.println();
+    }
 }

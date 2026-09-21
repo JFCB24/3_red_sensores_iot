@@ -77,4 +77,31 @@ public class BuscadorLecturas {
 
         return -1;
     }
+
+    /**
+     * Busca la primera lectura de una estacion. VERSION CORREGIDA.
+     *
+     * equals() compara el CONTENIDO de los String, que es lo que
+     * realmente necesitamos. Dos objetos String distintos pueden
+     * contener el mismo texto.
+     *
+     * @return posicion de la primera coincidencia o -1
+     */
+    public static int buscarPorEstacion(
+            LecturaSensor[] datos,
+            String idSensor) {
+
+        comparaciones = 0;
+
+        for (int i = 0; i < datos.length; i++) {
+
+            comparaciones++;
+
+            if (datos[i].getIdSensor().equals(idSensor)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }
