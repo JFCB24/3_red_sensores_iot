@@ -49,4 +49,32 @@ public class BuscadorLecturas {
 
         return -1;
     }
+
+    /**
+     * Busca la primera lectura de una estacion.
+     *
+     * ESTA VERSION CONTIENE UN ERROR INTENCIONAL.
+     *
+     * Usa == sobre String, que compara REFERENCIAS y no contenido.
+     * Se conserva para poder demostrar el defecto antes de corregirlo.
+     *
+     * @return posicion de la primera coincidencia o -1
+     */
+    public static int buscarPorEstacionDefectuoso(
+            LecturaSensor[] datos,
+            String idSensor) {
+
+        comparaciones = 0;
+
+        for (int i = 0; i < datos.length; i++) {
+
+            comparaciones++;
+
+            if (datos[i].getIdSensor() == idSensor) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }
