@@ -3,7 +3,7 @@
 **Espacio académico:** Estructuras de Datos
 **Proyecto integrador:** Red de Sensores IoT
 **Rama de trabajo:** `feature/semana-3-busqueda`
-**Ejecución:** `Ejecución: java -cp out IngestaSensores`
+**Ejecución:** `java -cp out IngestaSensores`
 ---
 
 ## 1. Traza previa a la corrección (versión defectuosa)
@@ -123,12 +123,11 @@ grande     inexistente            -1         -1             20       OK
 ## 5. Tabla de mediciones (resultados propios)
 
 Salida real de los experimentos 1 y 2:
-
 | Tamaño | Comparaciones lineal | Comparaciones binaria | Relación | Tiempo lineal (ms) | Tiempo binaria (ms) |
-|--------|------------------------|------------------------|----------|--------------------|---------------------|
-| 1.000  | 1.000                  | 10                     | 100,0    | 0,0349             | 0,0429              |
-| 100.000| 100.000                | 17                     | 5.882,4  | 4,1478             | 0,0464              |
-| 1.000.000 | 1.000.000           | 20                     | 50.000,0 | 26,8626            | 0,0673              |
+|---:|---:|---:|---:|---:|---:|
+| 1.000 | 1.000 | 10 | 100,0 | 0,0087 | 0,0198 |
+| 100.000 | 100.000 | 17 | 5.882,4 | 1,7120 | 0,0264 |
+| 1.000.000 | 1.000.000 | 20 | 50.000,0 | 7,3552 | 0,0338 |
 
 Búsqueda de un timestamp **inexistente** sobre 100.000 lecturas:
 
