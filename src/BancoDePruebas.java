@@ -176,6 +176,79 @@ public class BancoDePruebas {
     }
 
     /**
+     * Experimento 4: que ocurre cuando la busqueda binaria se aplica
+     * sobre un campo que NO esta ordenado.
+     *
+     * Se buscan 20 valores de PM2.5 que con certeza existen, porque
+     * se toman del propio arreglo. La busqueda lineal deberia
+     * encontrarlos todos. La binaria, no.
+     */
+    public static void experimentoCuatro() {
+
+        System.out.println(
+                "=== EXPERIMENTO 4: BINARIA POR PM2.5 (PRECONDICION) ==="
+        );
+
+        LecturaSensor[] datos =
+                GeneradorDatos.generar(10_000);
+
+        int aciertosLineal = 0;
+        int aciertosBinaria = 0;
+
+        for (int i = 0; i < 20; i++) {
+
+            double valor =
+                    datos[i * 137].getPm25();
+
+            int posLineal = -1;
+
+            for (int j = 0; j < datos.length; j++) {
+
+                if (datos[j].getPm25() == valor) {
+                    posLineal = j;
+                    break;
+                }
+            }
+
+            int posBinaria =
+                    BuscadorLecturas
+                            .busquedaBinariaPorPm25(
+                                    datos,
+                                    valor
+                            );
+
+            if (posLineal >= 0) {
+                aciertosLineal++;
+            }
+
+            if (posBinaria >= 0) {
+                aciertosBinaria++;
+            }
+        }
+
+        System.out.println(
+                "Valores buscados que SI existen:   20"
+        );
+
+        System.out.println(
+                "Encontrados por busqueda lineal:   "
+                        + aciertosLineal
+        );
+
+        System.out.println(
+                "Encontrados por busqueda binaria:  "
+                        + aciertosBinaria
+        );
+
+        System.out.println(
+                "Conclusion: algoritmo correcto + precondicion falsa"
+                        + " = resultado incorrecto."
+        );
+
+        System.out.println();
+    }
+
+    /**
      * Demuestra por que un String se compara con equals() y no con ==.
      *
      * Se construye a proposito un String con el mismo contenido pero

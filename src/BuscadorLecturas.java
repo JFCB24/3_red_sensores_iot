@@ -201,4 +201,47 @@ public class BuscadorLecturas {
 
         return -1;
     }
+
+    /**
+     * Busqueda binaria por PM2.5.
+     *
+     * PRECONDICION: el arreglo debe estar ordenado ascendentemente
+     * por PM2.5.
+     *
+     * El generador de la Semana 3 NO garantiza esa condicion: PM2.5
+     * se produce con valores aleatorios.
+     *
+     * El algoritmo esta bien implementado. Lo que falla es la
+     * precondicion de los datos.
+     *
+     * @return posicion de la lectura o -1 si no la encuentra
+     */
+    public static int busquedaBinariaPorPm25(
+            LecturaSensor[] datos,
+            double pm25) {
+
+        comparaciones = 0;
+
+        int inicio = 0;
+        int fin = datos.length - 1;
+
+        while (inicio <= fin) {
+
+            int medio = (inicio + fin) / 2;
+
+            comparaciones++;
+
+            if (datos[medio].getPm25() == pm25) {
+                return medio;
+            }
+
+            if (datos[medio].getPm25() < pm25) {
+                inicio = medio + 1;
+            } else {
+                fin = medio - 1;
+            }
+        }
+
+        return -1;
+    }
 }
