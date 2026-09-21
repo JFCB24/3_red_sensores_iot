@@ -130,6 +130,13 @@ public class RepositorioLecturas {
      * despues de que alguien llame a eliminar().
      */
     public double promedioPm25() {
+        // Sin lecturas la division seria 0/0, que en double no lanza
+        // excepcion: devuelve NaN y contamina en silencio cualquier
+        // calculo posterior. Se corta el caso aqui.
+        if (cantidad == 0) {
+            return 0.0;
+        }
+
         double suma = 0;
         for (int i = 0; i < cantidad; i++) {
             suma = suma + lecturas[i].getPm25();
