@@ -292,4 +292,175 @@ public class BancoDePruebas {
 
         System.out.println();
     }
+
+    /**
+     * Casos de prueba minimos de la busqueda binaria.
+     *
+     * Cubre primer elemento, elemento intermedio, ultimo elemento y
+     * elemento inexistente, sobre un arreglo pequeno y uno grande.
+     */
+    public static void pruebasMinimas() {
+
+        System.out.println(
+                "=== CASOS DE PRUEBA MINIMOS (BUSQUEDA BINARIA) ==="
+        );
+
+        System.out.printf(
+                "%-10s %-14s %10s %10s %14s %8s%n",
+                "arreglo",
+                "caso",
+                "esperado",
+                "obtenido",
+                "comparaciones",
+                "estado"
+        );
+
+        verificar("pequeno", 16);
+        verificar("grande", 1_000_000);
+
+        System.out.println();
+    }
+
+    /**
+     * Ejecuta los cuatro casos minimos sobre un arreglo de tamano n.
+     */
+    private static void verificar(String etiqueta, int n) {
+
+        LecturaSensor[] datos = GeneradorDatos.generar(n);
+
+        comprobarCaso(etiqueta, "primero", datos, 0);
+        comprobarCaso(etiqueta, "intermedio", datos, n / 2);
+        comprobarCaso(etiqueta, "ultimo", datos, n - 1);
+
+        // Caso inexistente: se espera -1.
+        int obtenido =
+                BuscadorLecturas.busquedaBinariaPorTimestamp(
+                        datos,
+                        GeneradorDatos.timestampInexistente()
+                );
+
+        imprimirCaso(
+                etiqueta,
+                "inexistente",
+                -1,
+                obtenido,
+                BuscadorLecturas.getComparaciones()
+        );
+    }
+
+    private static void comprobarCaso(
+            String etiqueta,
+            String caso,
+            LecturaSensor[] datos,
+            int esperado) {
+
+        int obtenido =
+                BuscadorLecturas.busquedaBinariaPorTimestamp(
+                        datos,
+                        GeneradorDatos.timestampEnPosicion(esperado)
+                );
+
+        imprimirCaso(
+                etiqueta,
+                caso,
+                esperado,
+                obtenido,
+                BuscadorLecturas.getComparaciones()
+        );
+    }
+
+    private static void imprimirCaso(
+            String etiqueta,
+            String caso,
+            int esperado,
+            int obtenido,
+            int comparaciones) {
+
+        System.out.printf(
+                "%-10s %-14s %10d %10d %14d %8s%n",
+                etiqueta,
+                caso,
+                esperado,
+                obtenido,
+                comparaciones,
+                (esperado == obtenido) ? "OK" : "FALLA"
+        );
+    }
+
+    /**
+     * Traza paso a paso la busqueda binaria sobre un arreglo de
+     * cuatro lecturas buscando la ultima posicion.
+     *
+     * Es la evidencia pedida en la bitacora: muestra inicio, fin,
+     * medio, la comparacion y la accion tomada en cada vuelta.
+     */
+    public static void trazaBusquedaBinaria() {
+
+        System.out.println(
+                "=== TRAZA: [0, 1, 2, 3] BUSCANDO 3 ==="
+        );
+
+        LecturaSensor[] datos = GeneradorDatos.generar(4);
+        String objetivo = GeneradorDatos.timestampEnPosicion(3);
+
+        System.out.printf(
+                "%6s %8s %6s %8s %14s %-22s%n",
+                "paso",
+                "inicio",
+                "fin",
+                "medio",
+                "valor medio",
+                "accion"
+        );
+
+        int inicio = 0;
+        int fin = datos.length - 1;
+        int paso = 0;
+
+        while (inicio <= fin) {
+
+            paso++;
+
+            int medio = (inicio + fin) / 2;
+
+            int comparacion =
+                    datos[medio].getTimestamp().compareTo(objetivo);
+
+            String accion;
+
+            if (comparacion == 0) {
+                accion = "encontrado, termina";
+            } else if (comparacion < 0) {
+                accion = "medio < objetivo, inicio = medio + 1";
+            } else {
+                accion = "medio > objetivo, fin = medio - 1";
+            }
+
+            System.out.printf(
+                    "%6d %8d %6d %8d %14d %-22s%n",
+                    paso,
+                    inicio,
+                    fin,
+                    medio,
+                    Integer.parseInt(datos[medio].getTimestamp()),
+                    accion
+            );
+
+            if (comparacion == 0) {
+                break;
+            }
+
+            if (comparacion < 0) {
+                inicio = medio + 1;
+            } else {
+                fin = medio - 1;
+            }
+        }
+
+        System.out.println(
+                "Total de comparaciones: " + paso
+        );
+
+        System.out.println();
+    }
 }

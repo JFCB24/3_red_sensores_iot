@@ -51,11 +51,13 @@ public class IngestaSensores {
         System.out.println("====================================================");
         System.out.println();
 
+        BancoDePruebas.trazaBusquedaBinaria();
         BancoDePruebas.experimentoUno();
         BancoDePruebas.experimentoDos();
         BancoDePruebas.experimentoTres();
         BancoDePruebas.experimentoCuatro();
         BancoDePruebas.demostracionComparacionStrings();
+        BancoDePruebas.pruebasMinimas();
     }
 
     private static void imprimirResumenIngesta(
