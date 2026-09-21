@@ -79,6 +79,53 @@ public class BuscadorLecturas {
     }
 
     /**
+     * Busqueda binaria por timestamp.
+     *
+     * PRIMERA VERSION: CONTIENE UN CICLO INFINITO.
+     *
+     * Actualiza el limite con "inicio = medio" en lugar de
+     * "inicio = medio + 1". Cuando el intervalo se reduce a dos
+     * elementos, medio vuelve a valer inicio en cada vuelta, el
+     * intervalo deja de achicarse y el while no termina nunca.
+     *
+     * NO se invoca desde ningun experimento. Queda registrada para
+     * poder razonar sobre el defecto antes de corregirlo.
+     */
+    public static int busquedaBinariaPorTimestampDefectuosa(
+            LecturaSensor[] datos,
+            String timestamp) {
+
+        comparaciones = 0;
+
+        int inicio = 0;
+        int fin = datos.length - 1;
+
+        while (inicio <= fin) {
+
+            int medio = (inicio + fin) / 2;
+
+            comparaciones++;
+
+            int comparacion =
+                    datos[medio]
+                            .getTimestamp()
+                            .compareTo(timestamp);
+
+            if (comparacion == 0) {
+                return medio;
+            }
+
+            if (comparacion < 0) {
+                inicio = medio;   // DEFECTO: el intervalo no avanza
+            } else {
+                fin = medio;      // DEFECTO: el intervalo no avanza
+            }
+        }
+
+        return -1;
+    }
+
+    /**
      * Busca la primera lectura de una estacion. VERSION CORREGIDA.
      *
      * equals() compara el CONTENIDO de los String, que es lo que
