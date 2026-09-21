@@ -1,0 +1,52 @@
+/* ============================================================
+   PLATAFORMA DE MONITOREO AMBIENTAL URBANO
+   BuscadorLecturas - SEMANA 3
+
+   Contiene los algoritmos de busqueda utilizados por el
+   proyecto. No es una aplicacion aparte: es una capacidad
+   nueva de la misma plataforma.
+   ============================================================ */
+
+public class BuscadorLecturas {
+
+    /**
+     * Cantidad de comparaciones realizadas por la ultima busqueda.
+     *
+     * Medir comparaciones permite estudiar el costo del algoritmo
+     * sin depender del reloj de la maquina.
+     */
+    private static int comparaciones = 0;
+
+    public static int getComparaciones() {
+        return comparaciones;
+    }
+
+    /**
+     * Busqueda lineal por timestamp.
+     *
+     * No necesita que los datos esten ordenados.
+     * Costo: O(n) en el peor caso.
+     *
+     * @param datos arreglo de lecturas
+     * @param timestamp timestamp que se desea encontrar
+     * @return posicion de la lectura o -1 si no existe
+     */
+    public static int busquedaLinealPorTimestamp(
+            LecturaSensor[] datos,
+            String timestamp) {
+
+        comparaciones = 0;
+
+        for (int i = 0; i < datos.length; i++) {
+            comparaciones++;
+
+            // .equals() compara CONTENIDO. El operador == compararia
+            // referencias, que no es lo que necesitamos con String.
+            if (datos[i].getTimestamp().equals(timestamp)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+}
