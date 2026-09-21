@@ -52,6 +52,8 @@ public class IngestaSensores {
         System.out.println();
 
         BancoDePruebas.experimentoUno();
+        BancoDePruebas.experimentoDos();
+        BancoDePruebas.experimentoTres();
         BancoDePruebas.demostracionComparacionStrings();
     }
 
