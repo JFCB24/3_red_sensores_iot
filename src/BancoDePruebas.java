@@ -82,11 +82,13 @@ public class BancoDePruebas {
         );
 
         System.out.printf(
-                "%12s %14s %14s %12s%n",
+                "%12s %12s %12s %10s %14s %14s%n",
                 "lecturas",
                 "lineal",
                 "binaria",
-                "relacion"
+                "relacion",
+                "t lineal (ms)",
+                "t binaria (ms)"
         );
 
         for (int n : TAMANOS) {
@@ -97,28 +99,38 @@ public class BancoDePruebas {
             String objetivo =
                     GeneradorDatos.timestampEnPosicion(n - 1);
 
+            long t0 = System.nanoTime();
+
             BuscadorLecturas.busquedaLinealPorTimestamp(
                     datos,
                     objetivo
             );
 
+            long t1 = System.nanoTime();
+
             int lineal =
                     BuscadorLecturas.getComparaciones();
+
+            long t2 = System.nanoTime();
 
             BuscadorLecturas.busquedaBinariaPorTimestamp(
                     datos,
                     objetivo
             );
 
+            long t3 = System.nanoTime();
+
             int binaria =
                     BuscadorLecturas.getComparaciones();
 
             System.out.printf(
-                    "%12d %14d %14d %12.1f%n",
+                    "%12d %12d %12d %10.1f %14.4f %14.4f%n",
                     n,
                     lineal,
                     binaria,
-                    (double) lineal / binaria
+                    (double) lineal / binaria,
+                    (t1 - t0) / 1_000_000.0,
+                    (t3 - t2) / 1_000_000.0
             );
         }
 
