@@ -267,10 +267,10 @@ public class BancoDePruebas {
      * distinta referencia (new String(...)), que es exactamente lo que
      * ocurre cuando el texto llega leido desde un archivo o una red.
      */
-    public static void demostracionComparacionStrings() {
+    /*public static void demostracionComparacionStrings() {
 
-        System.out.println(
-                "=== COMPARACION DE STRING: == vs equals() ==="
+      System.out.println(
+       /         "=== COMPARACION DE STRING: == vs equals() ==="
         );
 
         LecturaSensor[] datos = GeneradorDatos.generar(1_000);
@@ -311,7 +311,7 @@ public class BancoDePruebas {
      * Cubre primer elemento, elemento intermedio, ultimo elemento y
      * elemento inexistente, sobre un arreglo pequeno y uno grande.
      */
-    public static void pruebasMinimas() {
+   /* public static void pruebasMinimas() {
 
         System.out.println(
                 "=== CASOS DE PRUEBA MINIMOS (BUSQUEDA BINARIA) ==="
