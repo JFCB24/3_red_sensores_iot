@@ -38,6 +38,15 @@ public class IngestaSensores {
         // Los experimentos son parte de esta misma aplicación.
         //
         ejecutarExperimentosSemanaTres();
+
+        // =====================================================
+        // SEMANA 4 - ORDENAMIENTOS Y COMPARACIÓN DE EFICIENCIA
+        // =====================================================
+        //
+        // BancoDeOrdenamiento NO tiene main.
+        // Los experimentos son parte de esta misma aplicación.
+        //
+        ejecutarExperimentosSemana4();
     }
 
     /**
@@ -56,6 +65,25 @@ public class IngestaSensores {
         BancoDePruebas.experimentoDos();
         BancoDePruebas.experimentoTres();
         BancoDePruebas.experimentoCuatro();
+    }
+
+    /**
+     * Ejecuta las pruebas de la Semana 4 desde el único main
+     * del proyecto.
+     */
+    private static void ejecutarExperimentosSemana4() {
+        System.out.println();
+        System.out.println("====================================================");
+        System.out.println("       SEMANA 4 - ORDENAMIENTOS Y EFICIENCIA");
+        System.out.println("====================================================");
+        System.out.println();
+
+        BancoDeOrdenamiento banco = new BancoDeOrdenamiento();
+        banco.experimentoUno();
+        banco.experimentoDos();
+        banco.experimentoTres();
+        banco.experimentoCuatro();
+        banco.experimentoCinco();
     }
 
     private static void imprimirResumenIngesta(
