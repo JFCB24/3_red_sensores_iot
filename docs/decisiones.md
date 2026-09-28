@@ -1,4 +1,4 @@
-# Decisiones de diseño — Semana 3
+# Decisiones de diseño
 
 ## 1. Punto de entrada
 
@@ -145,3 +145,129 @@ también cuesta. La respuesta depende de cuántas búsquedas se hagan por cada
 ordenamiento, y de si los datos se modifican después de ordenarlos.
 
 Esta pregunta se retoma en la Semana 4.
+
+---
+
+# Decisiones de diseño — Semana 4
+
+## 8. Selección de algoritmos de ordenamiento
+
+Se implementan seis algoritmos:
+
+**Simples:** Burbuja (con corte temprano), Selección, Inserción.
+**Avanzados:** MergeSort, HeapSort, QuickSort.
+
+La implementación mide:
+- Número de comparaciones
+- Número de intercambios
+- Tiempo de ejecución
+
+### Evidencia medida
+
+Con 10.000 datos desordenados:
+
+| Algoritmo | Comparaciones | Intercambios | Tiempo (ms) |
+|---|---:|---:|---:|
+| Burbuja | 49.991.172 | 24.955.330 | 140 |
+| Selección | 49.995.000 | 9.984 | 51 |
+| Inserción | 25.055.854 | 0 | 46 |
+| MergeSort | 240.980 | 0 | 3 |
+| HeapSort | 470.614 | 124.118 | 3 |
+| QuickSort | 1.534.501 | 0 | 18 |
+
+La conclusión principal: **comparar y mover no tienen el mismo costo**.
+
+Selección realiza prácticamente las mismas comparaciones que Burbuja, pero
+mucho menos intercambios. Por eso puede ser más rápido a pesar de hacer
+comparaciones similares.
+
+## 9. Inserción y datos parcialmente ordenados
+
+Inserción tiene un comportamiento especial cuando los datos ya están parcialmente
+ordenados.
+
+Con datos ordenados por timestamp (como llegan de la red):
+
+| Algoritmo | Comparaciones | Tiempo (ms) |
+|---|---:|---:|
+| Burbuja | 49.958.144 | 101 |
+| Selección | 49.995.000 | 53 |
+| Inserción | 24.832.832 | 44 |
+
+Inserción mantiene su desempeño porque el arreglo no está ordenado por PM2.5
+(el criterio de comparación). Sin embargo, en escenarios donde **los datos
+llegan casi ordenados**, Inserción puede alcanzar O(n), lo que la hace
+competitiva incluso contra algoritmos O(n log n).
+
+### Decisión
+
+Se mantiene Inserción como candidato viable para la plataforma de sensores,
+ya que las lecturas lleguen cronológicamente y pueden estar parcialmente
+ordenadas por otras variables.
+
+## 10. Pivote de QuickSort
+
+QuickSort con pivote fijo en el primer elemento es vulnerable con datos
+ordenados cronológicamente.
+
+### Evidencia medida
+
+Con 50.000 datos:
+
+| Caso | Datos | Comparaciones | Tiempo (ms) |
+|---|---|---:|---:|
+| A | Desordenados | 1.534.501 | 18 |
+| B | Cronológicos | 1.546.526 | 5 |
+
+En nuestro experimento, el caso B no causó StackOverflowError. Sin embargo,
+la teoría indica que con particiones muy desbalanceadas, la profundidad de
+recursión puede exceder la pila disponible.
+
+### Decisión
+
+Para evitar el riesgo de StackOverflowError en producción, se proporciona una
+alternativa: `quickSortPivoteAleatorio`, que elige el pivote al azar. Esto
+garantiza un comportamiento promedio O(n log n) incluso con datos ordenados.
+
+Para la plataforma de sensores, se recomienda usar QuickSort con pivote
+aleatorio o MergeSort (que tiene garantía O(n log n) incluso en el peor caso).
+
+## 11. Efecto colateral del ordenamiento
+
+Ordenar por un criterio puede destruir el orden por otro criterio.
+
+### Escenario en el Experimento 5
+
+1. Datos llegan ordenados por timestamp → búsqueda binaria por timestamp funciona.
+2. Se solicita un ranking por PM2.5 → se ordena el arreglo.
+3. Timestamp ya no está ordenado → búsqueda binaria por timestamp devuelve `-1`.
+4. Búsqueda lineal aún encuentra el dato, pero es mucho más lenta.
+
+### Evidencia medida
+
+Buscando timestamp `000073412`:
+
+| Fase | Criterio | Ordenado | Resultado | Comparaciones |
+|---|---|---|---:|---:|
+| 1 | Por timestamp | Sí | Encontrado (pos 73412) | 16 |
+| 3 | Por PM2.5 | No | No encontrado | 16 |
+| 3 (lineal) | Lineal | N/A | Encontrado (pos 87705) | 87706 |
+
+### Decisión
+
+Cuando se necesiten ordenamientos múltiples, la solución depende del caso de uso:
+
+**A. Trabajar con copias:** Mantener una copia original ordenada por timestamp
+y una copia ordenada por PM2.5. Costo: memoria adicional.
+
+**B. Restaurar el orden:** Ordenar, generar el ranking y luego restaurar el
+orden original. Costo: tiempo adicional de ordenamiento.
+
+**C. Mantener índices separados:** Crear estructuras que permitan acceder
+a los datos según diferentes criterios sin modificar el arreglo original.
+Costo: complejidad adicional.
+
+Para esta plataforma, se elige la opción **A (copias)** por simplicidad:
+la memoria es abundante comparada con el costo de re-ordenar constantemente.
+
+---
