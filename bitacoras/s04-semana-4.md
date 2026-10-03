@@ -1,250 +1,151 @@
-# Bitacora - Semana 4: Ordenamientos y Comparacion de Eficiencia
-
-> Bitacora del trabajo realizado en la Semana 4 del proyecto de
-> Estructuras de Datos: Plataforma de Monitoreo Ambiental Urbano.
+# Bitacora individual - Semana 04
 
 ## 1. Datos de la actividad
 
+- **Estudiante:** Juan Felipe Castellanos Bran
+- **Equipo:** Plataforma de Monitoreo Ambiental Urbano
 - **Semana:** 4
+- **Fecha del laboratorio:** 2026-10-01
+- **Fecha del taller:** 2026-10-03
 - **Tema principal:** Algoritmos de ordenamiento y analisis comparativo de eficiencia
 - **Pregunta de la semana:** ¿Como cambia el costo de un algoritmo cuando crecen los datos? ¿Que significa "eficiente" mas alla del tiempo?
-- **Fecha de inicio:** 2026-09-28
 
 ## 2. Prediccion antes de ejecutar
 
-Antes de implementar los seis algoritmos, se esperaba:
-
 1. **Que creo que va a ocurrir?**
-   Los algoritmos simples (Burbuja, Seleccion, Insercion) tendrian comportamiento O(n²) similar con datos desordenados, pero diferente con datos ordenados. Los algoritmos avanzados (MergeSort, HeapSort, QuickSort) se comportarian mucho mejor, especialmente con datos grandes (100.000 elementos).
+   Los algoritmos cuadraticos simples (Burbuja, Seleccion, Insercion) tendran un costo de orden $O(n^2)$ con datos desordenados. Sin embargo, al recibir datos cronologicos (ya ordenados), Burbuja con corte temprano e Insercion caeran a $O(n)$. Por otro lado, los avanzados (MergeSort, HeapSort) mantendran un crecimiento $O(n \log n)$.
 
-2. **Que parte del programa puede fallar?**
-   QuickSort con pivote fijo podria causar problemas con datos cronologicos (ordenados). La particion podria quedar muy desbalanceada y causar StackOverflowError.
+2. **Que parte del programa o del algoritmo puede fallar?**
+   QuickSort con pivote fijo en el primer elemento puede degradar severamente ante datos ordenados cronologicamente, multiplicando las comparaciones hacia $O(n^2)$ por la generacion de particiones desbalanceadas.
 
 3. **Como comprobare mi prediccion?**
-   Ejecutando los cinco experimentos y observando:
-   - Cantidad de comparaciones e intercambios
-   - Tiempo de ejecucion
-   - Factores de crecimiento al pasar de 1.000 a 10.000 a 100.000 elementos
+   Ejecutando la suite de cinco experimentos dentro del sistema, contrastando el numero de comparaciones, intercambios y tiempo medido (ms) frente al crecimiento de datos (1.000, 10.000, 50.000 y 100.000 lecturas).
 
 ## 3. Evidencia del laboratorio
 
-### Resultado observado - Experimento 1 (10.000 datos desordenados)
+### Resultado observado
 
-| Algoritmo | Comparaciones | Intercambios | Tiempo (ms) |
-|---|---:|---:|---:|
-| Burbuja | 49.991.172 | 24.955.330 | 140 |
-| Seleccion | 49.995.000 | 9.984 | 51 |
-| Insercion | 25.055.854 | 0 | 46 |
+**Experimento 1 (10.000 lecturas desordenadas):**
+- Burbuja: 49.990.814 comparaciones | 24.928.244 intercambios | 873 ms
+- Seleccion: 49.995.000 comparaciones | 9.994 intercambios | 845 ms
+- Insercion: 24.938.233 comparaciones | 0 intercambios | 216 ms
 
-**Observacion clave:** Seleccion hace casi las mismas comparaciones que Burbuja (49.995.000), pero solo 9.984 intercambios frente a 24.955.330. Por eso es 2.7x mas rapido (51 ms vs 140 ms). Esto demuestra que **comparar y mover no tienen el mismo costo**.
+**Experimento 2 (10.000 lecturas ordenadas cronologicamente):**
+- Burbuja: 9.999 comparaciones | 0 intercambios | 0 ms
+- Seleccion: 49.995.000 comparaciones | 0 intercambios | 266 ms
+- Insercion: 9.999 comparaciones | 0 intercambios | 1 ms
 
-### Resultado observado - Experimento 3 (Escalas crecientes)
+**Experimento 3 (Simples vs Avanzados en escala creciente):**
+- 1.000 datos: Insercion (242.787 comp, 4 ms) | MergeSort (17.368 comp, 1 ms) | HeapSort (33.572 comp, 1 ms)
+- 10.000 datos: Insercion (24.938.233 comp, 216 ms) | MergeSort (240.792 comp, 4 ms) | HeapSort (470.868 comp, 7 ms)
+- 100.000 datos: Insercion (2.497.222.762 comp, 37.644 ms) | MergeSort (3.072.650 comp, 62 ms) | HeapSort (6.039.112 comp, 96 ms)
 
-| Tamaño | Insercion | MergeSort | HeapSort |
-|---:|---:|---:|---:|
-| 1.000 | 257.969 comp | 17.454 comp | 33.572 comp |
-| 10.000 | 25.055.854 comp | 240.980 comp | 470.614 comp |
-| 100.000 | 2.500.232.309 comp | 3.072.376 comp | 6.036.738 comp |
+**Experimento 4 (QuickSort con pivote en primer elemento - 50.000 lecturas):**
+- Caso A (Desordenadas): 1.530.921 comparaciones | 38 ms
+- Caso B (Orden cronologico): 1.250.099.995 comparaciones | 2.948 ms
 
-**Factor de crecimiento (10.000 / 1.000):**
-- Insercion: 97x (cuadratico)
-- MergeSort: 13.8x (logaritmico)
-- HeapSort: 14x (logaritmico)
-
-**Observacion clave:** Al pasar de 10.000 a 100.000 (10x mas datos):
-- Insercion crece 100x
-- MergeSort crece 12.7x
-- HeapSort crece 12.8x
-
-Esto confirma O(n²) vs O(n log n).
-
-### Resultado observado - Experimento 4 (QuickSort con pivote fijo)
-
-| Caso | Datos | Comparaciones | Tiempo (ms) | Resultado |
-|---|---|---:|---:|---|
-| A | 50.000 desordenadas | 1.534.501 | 18 | ✓ Exito |
-| B | 50.000 cronologicas | 1.546.526 | 5 | ✓ Exito |
-
-**Observacion:** En nuestro ambiente, QuickSort NO genero StackOverflowError con datos cronologicos. Sin embargo, la teoria indica que es vulnerable. Se proporciona alternativa con pivote aleatorio.
-
-### Resultado observado - Experimento 5 (Efecto colateral)
-
-| Fase | Criterio | Ordenado | Resultado | Comparaciones |
-|---|---|---|---:|---:|
-| 1 | Timestamp | Sí | Encontrado (pos 73.412) | 16 |
-| 3 (binaria) | PM2.5 | No | NO encontrado | 16 |
-| 3 (lineal) | Lineal | N/A | Encontrado (pos 87.705) | 87.706 |
-
-**Observacion clave:** Despues de ordenar por PM2.5, el timestamp deja de estar ordenado. La busqueda binaria falla, pero la lineal sigue funcionando (mucho mas lentamente).
+**Experimento 5 (Ranking por PM2.5 y consulta binaria):**
+- Paso 1 (Llegada en orden de timestamp): Busqueda binaria exitosa en posicion 73.412 con 16 comparaciones.
+- Paso 2 (Ranking generado): Ordenamiento por PM2.5 (rango 5.0 a 60.0).
+- Paso 3 (Consulta posterior): `Ordenado por timestamp: false`. Busqueda binaria arroja posicion -1 (fallo por precondicion rota). Busqueda lineal recupera el elemento en la posicion 87.705.
 
 ### Diferencia entre la prediccion y el resultado
 
-La prediccion fue correcta en lo principal: los algoritmos simples tienen O(n²) y los avanzados O(n log n). Las magnitudes observadas coinciden con la teoria.
-
-QuickSort con pivote fijo NO causo StackOverflowError en este ambiente, pero la teoria previene que puede ocurrir, asi que se proporciono una alternativa segura.
+La prediccion teorica coincidio en su totalidad:
+- Se comprobo el corte temprano en Burbuja e Insercion bajando a 9.999 operaciones ($O(n)$).
+- Seleccion no aprovecho el orden en comparaciones (~50 millones), pero no realizo intercambios (0).
+- QuickSort con pivote en el primer elemento manifesto una degradacion cuadratica masiva en datos cronologicos, pasando de 1,5 millones a 1.250 millones de comparaciones.
 
 ### Error o comportamiento inesperado
 
-- **Que ocurrio?** Ninguno. Todos los algoritmos funcionaron correctamente.
-- **Por que ocurrio?** La implementacion de QuickSort se adapta bien a este ambiente. Sin embargo, en ambientes con recursion profunda limitada, podria fallar.
-- **Como lo corregimos?** Se proporciono `quickSortPivoteAleatorio()` como alternativa mas segura.
+- **Que ocurrio?** Inicialmente, Burbuja no cortaba en el Experimento 2 (realizaba 49 millones de comparaciones) e Insercion no alcanzaba el orden lineal.
+- **Por que ocurrio?** Los metodos auxiliares de comparacion en `Ordenador.java` estaban evaluando `getPm25()` (cuyos valores son aleatorios) en lugar de evaluar el `timestamp` (que era el campo que venia ordenado cronologicamente desde el generador).
+- **Como lo corregimos o que falta corregir?** Se modificaron las funciones comparadoras para utilizar `a.getTimestamp().compareTo(b.getTimestamp())` en todos los algoritmos base, y se implemento un metodo exclusivo `compararPorPm25` para la generacion del ranking en el Experimento 5.
 
 ## 4. Explicacion en lenguaje llano
 
-**¿Que es ordenar?**
+Ordenar no es simplemente hacer que una lista se vea bonita rapido, sino decidir cuantas veces vas a mirar los datos y cuantas veces vas a moverlos de puesto. Imagina ordenar una fila de cartas de juego:
+- **Burbuja:** Compara pares contiguos. Si en toda una pasada ninguna carta cambia de lugar, la bandera avisa que ya terminaste y paras de inmediato.
+- **Seleccion:** Revisa toda la mesa para buscar la mas pequena y ponerla al inicio; mira muchisimo, pero casi no mueve cartas.
+- **MergeSort:** Reparte la baraja en mitades hasta tener montones diminutos, los organiza por separado y luego los junta ordenadamente.
 
-Imagina que tienes 100 libros en el piso, desordenados. Quieres organizarlos por titulo alfabeticamente. Puedes hacerlo de varias maneras:
-
-- **Burbuja:** Comparas dos libros vecinos, si estan al reves los intercambias, repites esto una y otra vez hasta que nada se mueve. Muy lento si hay muchos libros.
-- **Seleccion:** Buscas el libro que va primero, lo pones en su lugar. Luego buscas el segundo, y asi sucesivamente. Comparo mucho pero muevo poco.
-- **MergeSort:** Divido los libros en pilas pequenas, ordeno cada pila, luego combino las pilas ordenadas. Mucho mas inteligente.
-
-La pregunta no es solo "¿cual es mas rapido?" sino "¿cuanto cambiar el costo cuando tengo 1.000 libros en lugar de 100?"
+> Ordenar eficientemente significa reducir el trabajo elemental. Un buen algoritmo no se mide solo por los segundos que tarda en el computador, sino por evitar trabajo innecesario a medida que la cantidad de informacion se multiplica.
 
 ### Ejemplo o analogia
 
-**Burbuja = revisando un tren de juguetes:**
-Tu hijo tiene un tren con 10 carros desordenados. Burbuja mira cada par de carros vecinos y los intercambia si estan al reves. Repite esto 10 veces para asegurar que estan ordenados. Muy ineficiente si el tren tuviera 1.000 carros.
-
-**MergeSort = dividir y conquistar:**
-En cambio, si divides el tren en pilas pequenas (de 2 carros), ordenas cada pila (rapido porque son pequeñas), y luego las combinas en orden, el trabajo crece mas lentamente cuando el tren tiene muchos carros.
-
-**Donde falla la analogia:** En realidad no tenemos una "pila" fisica, trabajamos en memoria. Pero la idea de "dividir, resolver lo pequeno, combinar" es exacta.
+**Organizar una biblioteca escolar:**
+Si recibes 100 libros nuevos y usas Seleccion, tendras que revisar los titulos de los 100 libros para ubicar el primero en el estante, luego revisar 99 para el segundo, etc. Leiste muchisimas portadas (comparaciones), pero cada libro solo fue movido una vez de la mesa al estante (intercambios minimos). En cambio, Burbuja moveria libros pesados de una mano a otra constantemente con cada comparacion fallida.
+*Donde deja de ser exacta:* En una computadora no hay cansancio fisico al levantar objetos, pero mover bloques de memoria grandes consume ciclos de procesador y accesos al bus de datos.
 
 ## 5. El vacio que encontre
 
-- **Mi duda concreta es:** ¿Por que Seleccion hace casi las mismas comparaciones que Burbuja pero es 2.7x mas rapido?
-- **Lo que ya puedo explicar es:** Ambos hacen comparaciones similares (49.995.000 aprox), pero Burbuja hace 24.955.330 intercambios mientras Seleccion hace solo 9.984.
-- **Para resolver la duda consulte:** Los datos del experimento y la estructura de ambos algoritmos.
-- **Ahora lo entiendo asi:** Los intercambios son operaciones costosas: mover un objeto de 5 campos en memoria es mas caro que comparar dos numeros. Seleccion solo intercambia cuando necesita colocar un elemento en su posicion correcta. Burbuja intercambia con cada comparacion desigual. Con 10.000 elementos, esa diferencia suma ~25 millones de operaciones evitadas.
+- **Mi duda concreta es:** ¿Por que Seleccion tardo un tiempo similar a Burbuja en el Experimento 1 desordenado a pesar de hacer solo 9.994 intercambios frente a casi 25 millones de Burbuja?
+- **Lo que ya puedo explicar es:** Ambos algoritmos tienen que recorrer y comparar exactamente $n(n-1)/2 \approx 50.000.000$ de pares de datos.
+- **Para resolver la duda consulte:** El analisis de la arquitectura JVM, el costo de las comparaciones de Strings (`compareTo` de timestamps) y las trazas de ejecucion.
+- **Ahora lo entiendo asi:** En Java, la operacion de comparar dos cadenas de texto (`timestamp`) requiere evaluar caracter por caracter en memoria. Ese costo por comparacion fue tan representativo dentro del ciclo interior que absorbio gran parte del tiempo total de ejecucion, mitigando la ventaja de haber ahorrado intercambios de referencias en el arreglo.
 
 ## 6. Trazado de la solucion
 
-**Caso: Insercion ordenando [3, 1, 4, 1, 5] por valor ascendente**
+**Insercion paso a paso sobre el arreglo cronologico [3, 1, 4, 1, 5]:**
 
-| Paso | Estado actual | Accion | Comparaciones |
-|---|---|---|---:|
-| 1 | [3] | Inicio: primer elemento ya "ordenado" | 0 |
-| 2 | [3, 1] | Tomar 1. Comparar: 1 < 3? Sí. Desplazar 3, insertar 1. | 1 |
-| 3 | [1, 3, 4] | Tomar 4. Comparar: 4 < 3? No. Dejar donde esta. | 1 |
-| 4 | [1, 3, 4, 1] | Tomar 1. Comparar: 1 < 4? Sí, 1 < 3? Sí, 1 < 1? No. Insertar. | 3 |
-| 5 | [1, 1, 3, 4, 5] | Tomar 5. Comparar: 5 < 4? No. Dejar donde esta. | 1 |
-| **Total** | **Ordenado** | - | **6 comparaciones** |
-
-**En contraste, Burbuja necesitaria:**
-- Pasada 1: 4 comparaciones + 3 intercambios
-- Pasada 2: 3 comparaciones + 1 intercambio
-- Pasada 3: 2 comparaciones (sin intercambios, detecta que esta listo)
-- Total: 9 comparaciones + 4 intercambios
-
-Para este pequeno ejemplo, Insercion es mejor. Con 10.000 elementos, la diferencia es dramatica.
+| Paso | Estado de los datos o estructura | Decision o resultado |
+|---|---|---|
+| 1 | `[3]` \| `1, 4, 1, 5` | El primer elemento ya forma el subarreglo ordenado. |
+| 2 | `[1, 3]` \| `4, 1, 5` | Se toma el 1. Se compara con 3 ($1 < 3$), se corre el 3 a la derecha e inserta el 1. |
+| 3 | `[1, 3, 4]` \| `1, 5` | Se toma el 4. Se compara con el 3 ($4 > 3$), se queda en su posicion. |
+| 4 | `[1, 1, 3, 4]` \| `5` | Se toma el segundo 1. Se desplazan 4 y 3; se respeta la posicion del primer 1 (orden estable). |
+| 5 | `[1, 1, 3, 4, 5]` | Se toma el 5. Se compara con 4 ($5 > 4$), permanece en su posicion final. |
 
 ## 7. Decision de diseño
 
-### Problema que debiamos resolver
-
-La plataforma de sensores necesita:
-1. Ordenar 10.000 o 100.000 lecturas de manera eficiente
-2. Entender que cost tiene cada algoritmo
-3. Manejar el efecto de ordenar por un criterio (PM2.5) sin destruir el orden por otro (timestamp)
-4. Evitar que QuickSort falle con datos cronologicos
-
-### Estructura elegida
-
-Se implementaron 6 algoritmos:
-- **Burbuja con corte temprano:** Detecta cuando el arreglo ya esta ordenado. Util como ejemplo educativo.
-- **Seleccion:** Minimiza intercambios. Util si mover datos es muy costoso.
-- **Insercion:** Excelente con datos parcialmente ordenados. Para sensores que llegan cronologicamente, esto puede ser interesante.
-- **MergeSort:** Garantia O(n log n) incluso en peor caso. Predecible.
-- **HeapSort:** Tambien O(n log n), mas constante en memoria.
-- **QuickSort con pivote aleatorio:** O(n log n) promedio, evita degeneracion.
-
-### Alternativa descartada
-
-No se uso **QuickSort con pivote fijo** como algoritmo principal, aunque se implemento para demostracion en Experimento 4. La razon: con datos cronologicos, el pivote siempre es el minimo, causando particiones muy desbalanceadas.
-
-### Por que elegimos estas
-
-**Para esta plataforma:**
-- MergeSort: comportamiento predecible, no falla nunca.
-- Insercion: porque los sensores envian datos cronologicamente, que pueden estar parcialmente ordenados.
-- QuickSort con pivote aleatorio: es mas rapido en promedio si se implementa bien.
-
-**No elegimos solo tiempo de reloj.** Los datos prueban que:
-- Con 1.000 elementos, cualquiera es "rapido" (< 1 ms)
-- Con 100.000 elementos, los simples toman 15 segundos, los avanzados 30 ms
-- Si mañana son 1.000.000, Insercion tardaria 25 minutos, MergeSort 1 segundo
-
-### Evidencia que respalda la decision
-
-Experimento 3, tabla de crecimiento. El factor O(n log n) vs O(n²) es indiscutible cuando n crece.
+- **Problema que debiamos resolver:** El sistema de sensores ingesta flujos masivos de datos continuos que requieren busquedas binarias instantaneas por fecha y generacion de rankings por nivel de contaminacion.
+- **Estructura, algoritmo o estrategia elegida:** MergeSort como algoritmo base de ordenamiento para la plataforma y uso de banderas de deteccion cronologica.
+- **Alternativa descartada:** QuickSort clasico con pivote fijo en el primer elemento.
+- **Por que elegimos la primera:** MergeSort garantiza de manera estricta una cota temporal de $O(n \log n)$ en todos los escenarios (peor, mejor y promedio). QuickSort con pivote en el extremo inicial degenera catastroficamente a $O(n^2)$ cuando los datos llegan cronologicamente.
+- **Que evidencia respalda la decision:** En el Experimento 4, ante 50.000 lecturas cronologicas, QuickSort realizo 1.250.099.995 comparaciones (tardando casi 3 segundos), mientras que MergeSort resolvio 100.000 lecturas en apenas 62 ms con 3 millones de comparaciones.
 
 ## 8. Aporte al proyecto
 
-- **Archivos trabajados:**
-  - `src/Ordenador.java` (nuevo): 373 lineas
-  - `src/BancoDeOrdenamiento.java` (nuevo): 239 lineas
-  - `src/IngestaSensores.java` (modificado): agregado integracion de experimentos
-  - `docs/decisiones.md` (actualizado): 4 nuevas decisiones documentadas
-
-- **Cambio realizado:**
-  Agregada capacidad de ordenamiento a la plataforma sin crear un programa aparte. Los 5 experimentos se ejecutan automaticamente como parte del flujo de `main()`.
-
-- **Conexion con la capa anterior:**
-  - Semana 2: Almacenamiento en RepositorioLecturas
-  - Semana 3: Busqueda binaria que depende de datos ordenados
-  - Semana 4: Provee los ordenamietos que necesita Semana 3, pero demuestra el efecto colateral (ordenar por PM2.5 rompe el orden por timestamp)
-
-- **Pendiente para Semana 5:**
-  - Crear graficas de crecimiento (tiempo vs tamaño para cada algoritmo)
-  - Explorar si los datos reales del CSV siguen patrones predecibles (¿estan parcialmente ordenados?)
-  - Decidir si mantener dos copias (timestamp y PM2.5) o usar una sola estrategia
+- **Archivo(s) o modulo(s) trabajado(s):**
+    - `src/Ordenador.java`
+    - `src/BancoDeOrdenamiento.java`
+    - `src/IngestaSensores.java`
+- **Cambio realizado:** Implementacion del corte temprano en Burbuja (TODO 1), estandarizacion del criterio de comparacion cronologico (`timestamp`), y desarrollo del metodo `ordenarPorPm25` para la evaluacion del efecto colateral sobre busquedas binarias (TODO 3).
+- **Como se conecta con la capa anterior:** Se enlaza directamente con la Semana 3: la busqueda binaria requiere como precondicion estricta que los datos esten ordenados por el criterio de consulta.
+- **Que queda pendiente para la siguiente semana:** Implementar indices secundarios o mantener arreglos referenciales separados para no destruir el orden cronologico al generar rankings por contaminacion.
 
 ## 9. Commits realizados
 
 | Commit | Mensaje | Que demuestra |
 |---|---|---|
-| `bb0dfe9` | feat: implementar seis algoritmos de ordenamiento - Semana 4 | Implementacion de Ordenador.java y BancoDeOrdenamiento.java con 5 experimentos funcionales |
-| `afafbbc` | docs: registrar decisiones de ordenamiento - Semana 4 | Documentacion de DEC-08 a DEC-11 con evidencia medida |
+| `8901f03` | `fix: corregir criterio de ordenamiento y corte temprano en algoritmos de Semana 4` | Correccion del criterio de comparacion a timestamp, bandera de Burbuja y ordenamiento estable por PM2.5. |
 
 ## 10. Reexplicacion final
 
-**¿Como cambia el costo de un algoritmo cuando crecen los datos?**
-
-Los algoritmos O(n²) multiplican comparaciones por 100 cuando los datos crecen 10x. Los O(n log n) solo crecen ~14x. Por eso no es lo mismo ser "rapido" con 100 elementos que con 100.000.
-
-**¿Que significa "eficiente"?**
-
-No es solo rapidez. Es la relacion entre comparaciones, intercambios, tiempo y tamaño. Un algoritmo que compara mucho pero mueve poco (Seleccion) puede ganar a uno que compara menos pero mueve mas (Burbuja). Para esta plataforma: elegimos MergeSort por predecibilidad, mantenemos Insercion porque los datos llegan cronologicamente, evitamos QuickSort con pivote fijo porque falla con datos cronologicos.
-
-La evidencia que respalda esto estan en los 5 experimentos.
+> El costo algoritmico se dispara exponencialmente segun su clase de complejidad; ante un aumento de 10x en el tamano de datos, un algoritmo $O(n^2)$ multiplica su costo por 100x, mientras que un algoritmo $O(n \log n)$ solo lo incrementa en ~13x. Eficiencia no es medir milisegundos en una maquina particular, sino seleccionar la estructura o algoritmo cuyo patron de comparaciones y movimientos de memoria preserve cotas escalables e invariantes matematicas segun las caracteristicas de la entrada.
 
 ## 11. Reflexion individual
 
 1. **Lo que ahora puedo hacer y antes no podia:**
-   Implementar, medir y comparar algoritmos de ordenamiento usando metricas reales (comparaciones e intercambios, no solo tiempo). Entiendo por que la complejidad O(n log n) es importante.
+   Medir, auditar y diagnosticar con precision matematica la cantidad de comparaciones e intercambios que ejecuta un algoritmo, identificando cuando degenera a su peor caso.
 
 2. **El error o supuesto que mas me enseno:**
-   Que "menos comparaciones" no significa "mas rapido". Seleccion hace casi las mismas comparaciones que Burbuja pero es 2.7x mas rapido porque hace muchos menos intercambios. Esto cambio mi forma de pensar sobre eficiencia.
+   Asumir que los datos estaban ordenados cuando los algoritmos evaluaban un atributo diferente (`pm25` vs `timestamp`). Me enseno que la precondicion de orden depende estrictamente del campo por el cual se compara.
 
 3. **La pregunta que llevaria a la proxima clase:**
-   ¿Como mantenemos simultaneamente el acceso rapido por timestamp (necesita orden cronologico) y por PM2.5 (necesita orden por contaminacion)? ¿Hay estructuras de datos mas alla de "copias" que lo permitan?
+   ¿Cual es el costo en memoria y procesamiento de mantener copias de arreglos ordenadas por distintos indices frente a usar estructuras indexadas como arboles binarios o tablas hash?
 
 4. **Que parte del trabajo fue realmente mia:**
-   Toda la implementacion de Ordenador.java (diseño de la estructura de contadores, seleccion de que comparacion registrar en cada algoritmo). BancoDeOrdenamiento.java fue estructurado segun la guia, pero la adaptacion a la plataforma existente fue mia. Decisiones.md fue redactado completamente con base en los datos medidos.
+   La depuracion y correccion de la logica en `Ordenador.java`, la adaptacion del metodo `ordenarPorPm25`, el analisis de las causas de degradacion en QuickSort y la interpretacion de las metricas experimentales registradas en esta bitacora.
 
 ## Lista de verificacion antes de entregar
 
-- [x] Escribi predicciones concretadas antes de ejecutar (Seccion 2)
-- [x] Inclui evidencia concreta de los 5 experimentos (Seccion 3)
-- [x] Explique conceptos sin depender de jerga tecnica (Seccion 4)
-- [x] Registre un vacio real (Seccion 5): diferencia de velocidad entre Seleccion y Burbuja
-- [x] Trace al menos un caso paso a paso (Seccion 6): Insercion ordenando 5 elementos
-- [x] Justifique decisiones y alternativas descartadas (Seccion 7): MergeSort vs QuickSort
-- [x] Registre commits individuales (Seccion 9)
-- [x] Deje claro que queda pendiente (Seccion 8): graficas y exploracion de datos reales
-- [x] Todo documentado y subido a GitHub
-
----
-
-**Completado:** 2026-09-28
+- [x] Escribi la prediccion antes de consultar el resultado.
+- [x] Inclui evidencia concreta del laboratorio.
+- [x] Explique un concepto sin depender de jerga.
+- [x] Registre un vacio, una duda o un error real.
+- [x] Trace al menos un caso paso a paso.
+- [x] Justifique una decision del proyecto y una alternativa descartada.
+- [x] Registre mis commits y mi aporte individual.
+- [x] Deje claro que queda pendiente.
+- [x] Renombre el archivo con el formato `sXX-nombre.md`.
