@@ -46,17 +46,17 @@ public class Ordenador {
 
     private static boolean mayorPm25(LecturaSensor a, LecturaSensor b) {
         registrarComparacion();
-        return a.getPm25() > b.getPm25();
+        return a.getTimestamp().compareTo(b.getTimestamp()) > 0;
     }
 
     private static boolean menorPm25(LecturaSensor a, LecturaSensor b) {
         registrarComparacion();
-        return a.getPm25() < b.getPm25();
+        return a.getTimestamp().compareTo(b.getTimestamp()) < 0;
     }
 
     private static boolean menorOIgualPm25(LecturaSensor a, LecturaSensor b) {
         registrarComparacion();
-        return a.getPm25() <= b.getPm25();
+        return a.getTimestamp().compareTo(b.getTimestamp()) <= 0;
     }
 
     // ============ ALGORITMOS SIMPLES ============
@@ -366,8 +366,20 @@ public class Ordenador {
      * Ordena el arreglo por PM2.5 de manera ascendente.
      * Se utiliza en el Experimento 5 para generar el ranking.
      */
+        private static int compararPorPm25(LecturaSensor a, LecturaSensor b) {
+        return Double.compare(a.getPm25(), b.getPm25());
+    }
+
     public static void ordenarPorPm25(LecturaSensor[] datos) {
-        // Usamos mergeSort que es estable y predecible
-        mergeSort(datos);
+        reiniciarContadores();
+        for (int i = 1; i < datos.length; i++) {
+            LecturaSensor actual = datos[i];
+            int j = i - 1;
+            while (j >= 0 && compararPorPm25(datos[j], actual) > 0) {
+                datos[j + 1] = datos[j];
+                j--;
+            }
+            datos[j + 1] = actual;
+        }
     }
 }
